@@ -95,8 +95,20 @@ namespace JogoGourmet
         {
             Console.WriteLine("\nQual prato você pensou?");
             string answer = Console.ReadLine();
+            while (answer == "" || answer == null)
+            {
+                Console.WriteLine("\n*Por favor, digite alguma coisa :)");
+                Console.WriteLine("Qual prato você pensou?");
+                answer = Console.ReadLine();
+            }
             Console.WriteLine("\n" + answer + " é _________ mas " + questionParam + " não.");
             string answer2 = Console.ReadLine();
+            while (answer2 == "" || answer2 == null)
+            {
+                Console.WriteLine("\n*Por favor, digite alguma coisa :)");
+                Console.WriteLine(answer + " é _________ mas " + questionParam + " não.");
+                answer2 = Console.ReadLine();
+            }
             Console.WriteLine("\n");
             QuestionTree questionNew = new QuestionTree(answer2, answer, "");
             return questionNew;
