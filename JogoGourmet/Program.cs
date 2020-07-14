@@ -20,7 +20,6 @@ namespace JogoGourmet
 
             if (answer.ToUpper() == "S")
             {
-
                 runQuestion();
             }
             else
@@ -31,34 +30,42 @@ namespace JogoGourmet
 
         static private void runQuestion()
         {
-            Console.WriteLine("\nO prato que você pensou é "+question.QuestionParam+"? (Digite 'S' para sim e 'N' para não)");
+            Console.WriteLine("\nO prato que você pensou é " + question.QuestionParam + "? (Digite 'S' para sim e 'N' para não)");
             string answer = Console.ReadLine();
 
             switch (answer.ToUpper())
             {
                 case "S":
-                    Console.WriteLine("\nO prato que você pensou é " + question.YesAnswer + "? (Digite 'S' para sim e 'N' para não)");
-                    string answerYes = Console.ReadLine();
-                    switch (answerYes.ToUpper())
+                    if (question.nodesYes.Count > 0)
                     {
-                        case "S":
-                            Console.WriteLine("\nAcertei!\n");
-                            startGame();
-                            break;
-                        case "N":
-                            addNewQuestion(question.YesAnswer);
-                            break;
-                        default:
-                            System.Environment.Exit(0);
-                            break;
+                        enterNodes(question.nodesYes, question.YesAnswer);
+                    } else
+                    {
+                        Console.WriteLine("\nO prato que você pensou é " + question.YesAnswer + "? (Digite 'S' para sim e 'N' para não)");
+                        string answerYes = Console.ReadLine();
+                        switch (answerYes.ToUpper())
+                        {
+                            case "S":
+                                Console.WriteLine("\nAcertei!\n");
+                                startGame();
+                                break;
+                            case "N":
+                                question.nodesYes.Add(addNewQuestion(question.YesAnswer));
+                                startGame();
+                                break;
+                            default:
+                                System.Environment.Exit(0);
+                                break;
+                        }
                     }
                     break;
                 case "N":
 
-                    if(question.nodesNo.Count > 0)
+                    if (question.nodesNo.Count > 0)
                     {
                         enterNodes(question.nodesNo, question.NoAnswer);
-                    } else
+                    }
+                    else
                     {
                         Console.WriteLine("\nO prato que você pensou é " + question.NoAnswer + "? (Digite 'S' para sim e 'N' para não)");
                         string answerNo = Console.ReadLine();
@@ -88,21 +95,26 @@ namespace JogoGourmet
         {
             Console.WriteLine("\nQual prato você pensou?");
             string answer = Console.ReadLine();
-            Console.WriteLine("\n"+answer+" é _________ mas "+questionParam+ " não.");
+            Console.WriteLine("\n" + answer + " é _________ mas " + questionParam + " não.");
             string answer2 = Console.ReadLine();
             Console.WriteLine("\n");
             QuestionTree questionNew = new QuestionTree(answer2, answer, "");
             return questionNew;
         }
 
-        static private void enterNodes (List<QuestionTree> nodes, string lastQuestion)
+        static private void enterNodes(List<QuestionTree> nodes, string lastQuestion)
         {
-            nodes.ForEach(node => {
+            nodes.ForEach(node =>
+            {
                 Console.WriteLine("\nO prato que você pensou é " + node.QuestionParam + "? (Digite 'S' para sim e 'N' para não)");
                 string answerNo = Console.ReadLine();
                 switch (answerNo.ToUpper())
                 {
                     case "S":
+                        if (node.nodesYes.Count > 0)
+                        {
+                            enterNodes(node.nodesYes, node.YesAnswer);
+                        }
                         Console.WriteLine("\nO prato que você pensou é " + node.YesAnswer + "? (Digite 'S' para sim e 'N' para não)");
                         string answerNode = Console.ReadLine();
                         switch (answerNode.ToUpper())
@@ -112,6 +124,8 @@ namespace JogoGourmet
                                 startGame();
                                 break;
                             case "N":
+                                node.nodesYes.Add(addNewQuestion(node.YesAnswer));
+                                startGame();
                                 break;
                             default:
                                 System.Environment.Exit(0);
@@ -134,10 +148,10 @@ namespace JogoGourmet
             {
                 case "S":
                     Console.WriteLine("\nAcertei!\n");
-                                startGame();
+                    startGame();
                     break;
                 case "N":
-                    question.nodesNo.Add(addNewQuestion(question.NoAnswer));
+                    nodes.Add(addNewQuestion(lastQuestion));
                     startGame();
                     break;
                 default:
